@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
 import userRouter from "./Routes/user.route.js";
+import messageRouter from "./Routes/message.route.js";
 
 
 

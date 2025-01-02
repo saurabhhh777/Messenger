@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import userModel from "../models/user.model.js"; // Import your user model
+import cloudinary from "../utils/cloudinary.js";
 
 export const login = async (req, res) => {
   try {
@@ -106,24 +107,39 @@ export const getUserProfile = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email,profilepic } = req.body;
 
-    const updatedUser = await userModel.findByIdAndUpdate(
-      req.user.id,
-      { name, email },
-      { new: true, runValidators: true }
-    );
+    const userId = req.user._id;
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+    if(!name || ! email || !profilepic){
+      return res.status(400).json({ message: "Please enter name , email,profilepic",success:false });
     }
 
+
+    
+    if(name){
+      const userExists = await userModel.findByIdAndUpdate(userId, {name:name},{new:true});
+    }
+    
+    let user;
+
+    if(profilepic){
+      const uploadedResponse = await cloudinary.uploader.upload(profilepic, {
+        upload_preset: "dev_setups",
+      });
+      user = await userModel.findByIdAndUpdate(userId, {profilePic:uploadedResponse.secure_url },{new:true});
+
+    }
+
+
     return res.json({
-      success: true,
-      message: "Profile updated successfully",
-      user: { id: updatedUser._id, name: updatedUser.name, email: updatedUser.email, },
-      success: true,
+      message:"User updated successfully",
+      success:true,
+      user,
     });
+    
+
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error",
