@@ -27,6 +27,7 @@ connectDB();
 
 //api point 
 app.use("/api/v1/user",userRouter);
+app.use("/api/v2/message",messageRouter);
 
 
 

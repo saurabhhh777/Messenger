@@ -13,7 +13,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-});
+    profilePic: {
+        type: String,
+        default: ""
+    },
+
+},{timestamps: true});
 
 const User = mongoose.model("User", userSchema);
 

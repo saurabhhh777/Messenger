@@ -27,7 +27,12 @@ export const login = async (req, res) => {
     });
 
     return res
-      .cookie("token", token, { httpOnly: true })
+      .cookie("token", token, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite:"Strict",
+        secure: process.env.NODE_ENV === "production" ? true : false,
+      })
       .json({ 
         message: "Login successful",
         user: { id: user._id, name: user.name, email: user.email }, // Exclude password
@@ -35,7 +40,7 @@ export const login = async (req, res) => {
       });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error",success:false });
   }
 };
 
@@ -47,7 +52,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "Please enter name, email, and password" });
     }
 
-    const userExists = await userModel.findOne(email );
+    const userExists = await userModel.findOne({email});
 
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
@@ -66,7 +71,12 @@ export const register = async (req, res) => {
     });
 
     return res
-      .cookie("token", token, { httpOnly: true })
+      .cookie("token", token, { 
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite:"Strict",
+        secure: process.env.NODE_ENV === "production" ? true : false,
+      })
       .json({ 
         message: "User created successfully",
         user: { id: user._id, name: user.name, email: user.email },
@@ -74,7 +84,7 @@ export const register = async (req, res) => {
       });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error",success:false });
   }
 };
 
@@ -82,12 +92,15 @@ export const getUserProfile = async (req, res) => {
   try {
     const user = await userModel.findById(req.user.id).select("-password");
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found",success:false });
     }
+
+
+
     return res.json({ success: true, user });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error",success:false });
   }
 };
 
@@ -108,10 +121,37 @@ export const updateUserProfile = async (req, res) => {
     return res.json({
       success: true,
       message: "Profile updated successfully",
-      user: { id: updatedUser._id, name: updatedUser.name, email: updatedUser.email },
+      user: { id: updatedUser._id, name: updatedUser.name, email: updatedUser.email, },
+      success: true,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error",
+    success:false
+    });
   }
+};
+
+
+
+export const logout = async (req, res) => {
+  try {
+
+    return res
+      .cookie("token", "", {
+        httpOnly: true,
+        expires: new Date(0),
+        sameSite:"Strict",
+        secure: process.env.NODE_ENV === "production" ? true : false,
+      })
+      .json({ message: "Logged out", success: true });
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(5000).json({
+      message:"Internal Server Error",
+      success:false
+    });
+  }
+
 };
