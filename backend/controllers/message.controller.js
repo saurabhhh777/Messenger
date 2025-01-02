@@ -8,6 +8,8 @@ export const getUser = async (req, res) => {
       "-password"
     ); // filter out the logged in user
 
+
+    //return the users except the logged in user
     return res.json({ success: true, users: filterUsers });
   } catch (error) {
     console.log(error);
