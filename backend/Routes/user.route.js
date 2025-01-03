@@ -8,7 +8,7 @@ router.post('/signup', register);
 router.post('/signin', login);
 router.get('/profile', protect, getUserProfile);
 router.put('/profile', protect, updateUserProfile);
-router.post("/logout",protect,logout);
+router.post("/logout",logout);
 router.get("/check",protect,checkAuth);
 
 

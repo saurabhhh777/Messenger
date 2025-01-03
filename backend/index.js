@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import dotenv, { parse } from "dotenv";
 import connectDB from "./utils/db.js";
 import userRouter from "./Routes/user.route.js";
 import messageRouter from "./Routes/message.route.js";
@@ -22,8 +23,9 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-
+``
 // Connect to MongoDB
 connectDB();
 

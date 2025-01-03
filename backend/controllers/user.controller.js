@@ -8,7 +8,9 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Please enter email and password" });
+      return res
+        .status(400)
+        .json({ message: "Please enter email and password" });
     }
 
     const user = await userModel.findOne({ email });
@@ -31,17 +33,19 @@ export const login = async (req, res) => {
       .cookie("token", token, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite:"Strict",
+        sameSite: "Strict",
         secure: process.env.NODE_ENV === "production" ? true : false,
       })
-      .json({ 
+      .json({
         message: "Login successful",
         user: { id: user._id, name: user.name, email: user.email }, // Exclude password
         success: true,
       });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error",success:false });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
   }
 };
 
@@ -50,10 +54,12 @@ export const register = async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Please enter name, email, and password" });
+      return res
+        .status(400)
+        .json({ message: "Please enter name, email, and password" });
     }
 
-    const userExists = await userModel.findOne({email});
+    const userExists = await userModel.findOne({ email });
 
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
@@ -72,20 +78,22 @@ export const register = async (req, res) => {
     });
 
     return res
-      .cookie("token", token, { 
+      .cookie("token", token, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite:"Strict",
+        sameSite: "Strict",
         secure: process.env.NODE_ENV === "production" ? true : false,
       })
-      .json({ 
+      .json({
         message: "User created successfully",
         user: { id: user._id, name: user.name, email: user.email },
         success: true,
       });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error",success:false });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
   }
 };
 
@@ -93,102 +101,83 @@ export const getUserProfile = async (req, res) => {
   try {
     const user = await userModel.findById(req.user.id).select("-password");
     if (!user) {
-      return res.status(404).json({ message: "User not found",success:false });
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
     }
-
-
 
     return res.json({ success: true, user });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error",success:false });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
   }
 };
 
 export const updateUserProfile = async (req, res) => {
   try {
-    const { name, email,profilepic } = req.body;
+    const { profilePic } = req.body;
 
     const userId = req.user._id;
 
-    if(!name || ! email || !profilepic){
-      return res.status(400).json({ message: "Please enter name , email,profilepic",success:false });
+    if (!profilePic) {
+      return res
+        .status(400)
+        .json({ message: "ProfilePic is requried", success: false });
     }
 
-
-    
-    if(name){
-      const userExists = await userModel.findByIdAndUpdate(userId, {name:name},{new:true});
-    }
-    
-    let user;
-
-    if(profilepic){
-      const uploadedResponse = await cloudinary.uploader.upload(profilepic, {
-        upload_preset: "dev_setups",
-      });
-      user = await userModel.findByIdAndUpdate(userId, {profilePic:uploadedResponse.secure_url },{new:true});
-
-    }
-
+    const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadedResponse.secure_url },
+      { new: true }
+    ).select("-password");
 
     return res.json({
-      message:"User updated successfully",
-      success:true,
+      message: "User updated successfully",
+      success: true,
       user,
     });
-    
-
-
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal Server Error",
-    success:false
-    });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
   }
 };
 
-
-
 export const logout = async (req, res) => {
   try {
-
     return res
       .cookie("token", "", {
         httpOnly: true,
         expires: new Date(0),
-        sameSite:"Strict",
+        sameSite: "Strict",
         secure: process.env.NODE_ENV === "production" ? true : false,
       })
       .json({ message: "Logged out", success: true });
-    
   } catch (error) {
     console.log(error);
-    return res.status(5000).json({
-      message:"Internal Server Error",
-      success:false
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
     });
   }
-
 };
-
 
 export const checkAuth = async (req, res) => {
   try {
-
     return res.json({
-      success:true,
-      user:req.user
+      success: true,
+      user: req.user,
     });
-
-    
   } catch (error) {
     console.log(error);
 
     return res.status(500).json({
-      message:"Internal Server Error",
-      success:false
+      message: "Internal Server Error",
+      success: false,
     });
   }
- 
 };
