@@ -10,7 +10,7 @@ const Signin = () => {
     password: "",
   });
 
-  const { signup } = useAuthStore();
+  const { signin } = useAuthStore();
 
   const validateForm = () => {
     // Add validation logic here
@@ -20,7 +20,7 @@ const Signin = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      signup(formData);
+      signin(formData);
     }
   };
 
@@ -68,15 +68,15 @@ const Signin = () => {
             type="submit"
             className="bg-black text-white py-2 rounded hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Sign Up
+            Sign In
           </button>
           <p className="text-center text-white">
-            Already have an account?{" "}
+            Create an Account{" "}
             <Link
               className="text-blue-400 hover:text-blue-300"
-              to="/signin"
+              to="/signup"
             >
-              Login
+              Signup
             </Link>
           </p>
         </form>

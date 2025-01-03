@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore.js";
 import { Eye, EyeOff, Mail, User, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,7 +15,18 @@ const Signup = () => {
   const { signup } = useAuthStore();
 
   const validateForm = () => {
-    // Add validation logic here
+    if (!formData.name) {
+      alert("Name is required");
+      return false;
+    }
+    if (!formData.email) {
+      alert("Email is required");
+      return false;
+    }
+    if (!formData.password) {
+      alert("Password is required");
+      return false;
+    }
     return true;
   };
 
@@ -22,6 +34,7 @@ const Signup = () => {
     e.preventDefault();
     if (validateForm()) {
       signup(formData);
+      // toast.success("Signup successful");
     }
   };
 

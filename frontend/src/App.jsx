@@ -8,6 +8,7 @@ import ProfilePage from './components/page/ProfilePage.jsx';
 import SettingPage from './components/page/SettingPage.jsx';
 import { useAuthStore } from './store/useAuthStore.js';
 import {Loader} from "lucide-react";
+import {ToastContainer} from "react-toastify";
 
 
 const App = () => {
@@ -45,6 +46,8 @@ const App = () => {
         <Route path="/setting" element={<SettingPage />} />
         
       </Routes>
+
+      <ToastContainer/>
 
 
     </div>
