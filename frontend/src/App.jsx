@@ -9,11 +9,14 @@ import SettingPage from './components/page/SettingPage.jsx';
 import { useAuthStore } from './store/useAuthStore.js';
 import {Loader} from "lucide-react";
 import {ToastContainer} from "react-toastify";
+import { useThemeStore } from './store/useThemeStore.js';
 
 
 const App = () => {
 
   const {authUser,checkAuth,isCheckingAuth} = useAuthStore();
+  const {theme} = useThemeStore();
+
 
   useEffect(() => {
     checkAuth(); 
@@ -34,7 +37,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div data-theme={theme}>
 
       <Navbar />
 
